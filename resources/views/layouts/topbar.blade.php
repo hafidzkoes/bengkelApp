@@ -3,21 +3,30 @@
         <div class="flex justify-between items-center h-20">
             
             <div class="flex-shrink-0 flex items-center">
-                <a href="{{ url('/') }}" class="text-2xl font-extrabold text-gray-900 tracking-tight">
+                <a href="{{ url('/dashboard') }}" class="text-2xl font-extrabold text-gray-900 tracking-tight">
                     Bengkel<span class="text-red-600">App</span>
                 </a>
             </div>
 
             @if(!auth()->check() || auth()->user()->role === 'customer')
                 <div class="flex-1 flex justify-center px-4 md:px-8">
-                    <div class="w-full max-w-3xl relative">
+                    
+                    <form action="{{ route('cari.bengkel') }}" method="GET" class="w-full max-w-3xl relative">
+                        
+                        <input type="hidden" name="lat" value="{{ request('lat') }}">
+                        <input type="hidden" name="lng" value="{{ request('lng') }}">
+                        
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-red-500 font-bold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         </div>
-                        <input type="text" class="block w-full pl-12 pr-4 py-2.5 md:py-3 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm transition-all shadow-sm" placeholder="Nama layanan, bengkel, atau kota">
-                    </div>
+
+                        <input type="text" name="keyword" value="{{ request('keyword') }}" 
+                               class="block w-full pl-12 pr-4 py-2.5 md:py-3 border border-gray-300 rounded-full leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 sm:text-sm transition-all shadow-sm" 
+                               placeholder="Nama layanan, bengkel, atau kota (Lalu tekan Enter)">
+                    </form>
+
                 </div>
             @endif
 

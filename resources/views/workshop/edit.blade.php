@@ -48,6 +48,7 @@
                             
                             <p class="text-xs text-red-500 mt-2 font-medium">*Wajib: Geser dan klik peta untuk menentukan titik akurat bengkel Anda agar pelanggan bisa menemukan Anda.</p>
                         </div>
+                        
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Nomor WhatsApp Aktif * (Awali dengan 62...)</label>
                             <input type="number" name="nomor_kontak" 
@@ -55,6 +56,20 @@
                                 required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </div>
 
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Jam Buka (Opsional)</label>
+                                <input type="time" name="jam_buka" 
+                                    value="{{ old('jam_buka', isset($workshop->jam_buka) ? \Carbon\Carbon::parse($workshop->jam_buka)->format('H:i') : '') }}" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Jam Tutup (Opsional)</label>
+                                <input type="time" name="jam_tutup" 
+                                    value="{{ old('jam_tutup', isset($workshop->jam_tutup) ? \Carbon\Carbon::parse($workshop->jam_tutup)->format('H:i') : '') }}" 
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            </div>
+                        </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Nama Kepala Bengkel (Opsional)</label>
                             <input type="text" name="nama_kepala_bengkel" 

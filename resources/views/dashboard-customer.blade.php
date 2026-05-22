@@ -55,7 +55,7 @@
         <div class="container mx-auto px-4 md:px-12 mb-24 mt-12">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl md:text-2xl font-extrabold text-gray-800 tracking-tight">
-                    Rekomendasi Bengkel Terdekat
+                    Rekomedasi Bengkel Terdekat
                 </h2>
                 <a href="{{ url()->current() }}?lat={{ request('lat') }}&lng={{ request('lng') }}" class="text-sm font-semibold text-red-600 hover:text-red-700 transition">
                     Lihat Semua →
@@ -77,10 +77,29 @@
                                 </div>
                             @endif
                             
-                            <span class="absolute top-3 right-3 bg-green-500 text-white text-xs px-2.5 py-1 rounded-full font-bold shadow-sm">
-                                Buka
-                            </span>
-                        </div>
+                            @if($workshop->jam_buka && $workshop->jam_tutup)
+                                @php
+                                    $sekarang = \Carbon\Carbon::now('Asia/Jakarta')->format('H:i');
+                                    $jamBuka = \Carbon\Carbon::parse($workshop->jam_buka)->format('H:i');
+                                    $jamTutup = \Carbon\Carbon::parse($workshop->jam_tutup)->format('H:i');
+                                    $sedangBuka = ($sekarang >= $jamBuka && $sekarang <= $jamTutup);
+                                @endphp
+
+                                @if($sedangBuka)
+                                    <span class="absolute top-3 right-3 bg-green-500 text-white text-[11px] px-2.5 py-1 rounded-full font-bold shadow-sm tracking-wide">
+                                        BUKA ⋅ {{ $jamBuka }} - {{ $jamTutup }}
+                                    </span>
+                                @else
+                                    <span class="absolute top-3 right-3 bg-gray-500 text-white text-[11px] px-2.5 py-1 rounded-full font-bold shadow-sm tracking-wide">
+                                        TUTUP
+                                    </span>
+                                @endif
+                            @else
+                                <span class="absolute top-3 right-3 bg-green-500 text-white text-[11px] px-2.5 py-1 rounded-full font-bold shadow-sm tracking-wide">
+                                    BUKA
+                                </span>
+                            @endif
+                            </div>
 
                         <div class="p-5 flex-1 flex flex-col justify-between">
                             <div>
@@ -105,7 +124,7 @@
                                     <span>🗺️</span> Kunjungi Bengkel
                                 </a>
                             </div>
-                        </div>
+                            </div>
 
                     </div>
                 @empty
@@ -135,10 +154,7 @@
                         function(position) {
                             const userLat = position.coords.latitude;
                             const userLng = position.coords.longitude;
-                            
-                            // Ambil layanan jika ada, supaya tidak hilang saat refresh lokasi
                             const layanan = urlParams.get('layanan') ? '&layanan=' + urlParams.get('layanan') : '';
-                            
                             window.location.href = window.location.pathname + '?lat=' + userLat + '&lng=' + userLng + layanan;
                         }, 
                         function(error) {

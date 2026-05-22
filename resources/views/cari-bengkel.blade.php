@@ -34,8 +34,30 @@
                                     <span class="text-xs font-semibold">Foto belum tersedia</span>
                                 </div>
                             @endif
-                            <span class="absolute top-3 right-3 bg-green-500 text-white text-xs px-2.5 py-1 rounded-full font-bold shadow-sm">Buka</span>
-                        </div>
+                            
+                            @if($workshop->jam_buka && $workshop->jam_tutup)
+                                @php
+                                    $sekarang = \Carbon\Carbon::now('Asia/Jakarta')->format('H:i');
+                                    $jamBuka = \Carbon\Carbon::parse($workshop->jam_buka)->format('H:i');
+                                    $jamTutup = \Carbon\Carbon::parse($workshop->jam_tutup)->format('H:i');
+                                    $sedangBuka = ($sekarang >= $jamBuka && $sekarang <= $jamTutup);
+                                @endphp
+
+                                @if($sedangBuka)
+                                    <span class="absolute top-3 right-3 bg-green-500 text-white text-[11px] px-2.5 py-1 rounded-full font-bold shadow-sm tracking-wide">
+                                        BUKA ⋅ {{ $jamBuka }} - {{ $jamTutup }}
+                                    </span>
+                                @else
+                                    <span class="absolute top-3 right-3 bg-gray-500 text-white text-[11px] px-2.5 py-1 rounded-full font-bold shadow-sm tracking-wide">
+                                        TUTUP
+                                    </span>
+                                @endif
+                            @else
+                                <span class="absolute top-3 right-3 bg-green-500 text-white text-[11px] px-2.5 py-1 rounded-full font-bold shadow-sm tracking-wide">
+                                    BUKA
+                                </span>
+                            @endif
+                            </div>
 
                         <div class="p-5 flex-1 flex flex-col justify-between">
                             <div>
@@ -60,17 +82,14 @@
                                     <span>🗺️</span> Rute
                                 </a>
 
-                               @php
-                                    // 1. Format Nomor WA
+                                @php
                                     $nomorWa = $workshop->nomor_kontak;
                                     if (str_starts_with($nomorWa, '0')) {
                                         $nomorWa = '62' . substr($nomorWa, 1);
                                     }
-
-                                    // 2. Buat Link Lokasi Customer berdasarkan URL saat ini
-                                    $linkLokasiCustomer = "https://www.google.com/maps/search/?api=1&query=" . request('lat') . "," . request('lng');
                                     
-                                    // 3. Rangkai Pesan Otomatisnya
+                                    // Buat Link Lokasi Customer berdasarkan URL saat ini
+                                    $linkLokasiCustomer = "https://www.google.com/maps/search/?api=1&query=" . request('lat') . "," . request('lng');
                                     $pesanWa = "Halo *" . $workshop->nama_bengkel . "*, saya butuh bantuan darurat. Bisakah Anda datang ke lokasi saya? Berikut adalah titik lokasi saya saat ini: " . $linkLokasiCustomer;
                                 @endphp
                                 

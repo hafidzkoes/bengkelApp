@@ -59,26 +59,47 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-// 2. RUTE BARU: HALAMAN PENCARIAN BENGKEL BERDASARKAN LAYANAN (Halaman Baru)
+// 2. RUTE BARU: HALAMAN PENCARIAN BENGKEL BERDASARKAN LAYANAN & KATA KUNCI
 Route::get('/cari-bengkel', function () {
     $user = auth()->user();
     
     if ($user->role === 'customer') {
         $userLat = request('lat');
         $userLng = request('lng');
-        $layanan = request('layanan'); // Menangkap klik tombol dari Customer
+        $layanan = request('layanan'); // Menangkap klik tombol layanan dari Customer
+        $keyword = request('keyword'); // Menangkap ketikan dari kotak pencarian
 
         $query = Workshop::whereNotNull('nama_bengkel')
                             ->whereNotNull('latitude')
                             ->whereNotNull('longitude');
 
-        // Tentukan judul halaman dan saring data sesuai pilihan tombol
+        // Tentukan judul halaman dan saring data sesuai pilihan tombol atau ketikan pencarian
         if ($layanan == 'ban_bocor') {
             $query->where('bisa_tambal_ban', true);
             $judul_halaman = "Layanan Tambal Ban Terdekat";
         } elseif ($layanan == 'perbaikan_mesin') {
             $query->where('bisa_perbaikan_mesin', true);
             $judul_halaman = "Layanan Motor Mogok Terdekat";
+        } elseif (!empty($keyword)) {
+            // Ubah ketikan menjadi huruf kecil semua agar lebih mudah dicek
+            $keywordLower = strtolower($keyword);
+
+            $query->where(function($q) use ($keyword, $keywordLower) {
+                // 1. Cari berdasarkan Nama Bengkel atau Alamat Kota
+                $q->where('nama_bengkel', 'LIKE', "%{$keyword}%")
+                  ->orWhere('alamat_bengkel', 'LIKE', "%{$keyword}%");
+
+                // 2. LOGIKA PINTAR: Jika yang diketik mengandung kata layanan, tampilkan juga!
+                if (str_contains($keywordLower, 'ban') || str_contains($keywordLower, 'bocor') || str_contains($keywordLower, 'tambal')) {
+                    $q->orWhere('bisa_tambal_ban', true);
+                }
+                
+                if (str_contains($keywordLower, 'mesin') || str_contains($keywordLower, 'mogok')) {
+                    $q->orWhere('bisa_perbaikan_mesin', true);
+                }
+            });
+            
+            $judul_halaman = 'Hasil Pencarian: "' . $keyword . '"';
         } else {
             $judul_halaman = "Semua Bengkel Terdekat";
         }
