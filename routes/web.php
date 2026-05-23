@@ -5,8 +5,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WorkshopController;
 use App\Models\Workshop;
 
+// RUTE LANDING PAGE (Beranda untuk pengguna yang belum login)
 Route::get('/', function () {
-    return view('welcome');
+    // Kita ambil semua data bengkel untuk dipamerkan di halaman depan,
+    // tapi TIDAK menghitung jarak (karena belum melacak GPS tamu).
+    $workshops = App\Models\Workshop::whereNotNull('nama_bengkel')
+                            ->whereNotNull('latitude')
+                            ->whereNotNull('longitude')
+                            ->get();
+
+    return view('welcome', compact('workshops'));
 });
 
 // 1. RUTE DASHBOARD UTAMA (Menampilkan semua bengkel terdekat)

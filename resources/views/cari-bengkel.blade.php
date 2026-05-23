@@ -57,7 +57,7 @@
                                     BUKA
                                 </span>
                             @endif
-                            </div>
+                        </div>
 
                         <div class="p-5 flex-1 flex flex-col justify-between">
                             <div>
@@ -68,15 +68,25 @@
                                     <span class="text-gray-400 flex-shrink-0">📍</span>
                                     {{ $workshop->alamat_bengkel }}
                                 </p>
+                                
                                 @if(isset($workshop->jarak))
-                                    <div class="mt-3 inline-flex items-center gap-1 bg-red-100 text-red-700 px-2.5 py-1 rounded-md text-xs font-bold border border-red-200">
-                                        <span>📏</span> Jarak: {{ number_format($workshop->jarak, 1, ',', '.') }} km
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        <div class="inline-flex items-center gap-1 bg-red-100 text-red-700 px-2.5 py-1 rounded-md text-xs font-bold border border-red-200">
+                                            <span>📏</span> Jarak: {{ number_format($workshop->jarak, 1, ',', '.') }} km
+                                        </div>
+                                        
+                                        @php
+                                            // Asumsi kecepatan 30 km/jam (1 km = 2 Menit). Ditambah 5 menit persiapan montir.
+                                            $estimasiTiba = round($workshop->jarak * 2) + 5;
+                                        @endphp
+                                        <div class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-2.5 py-1 rounded-md text-xs font-bold border border-blue-200">
+                                            <span>⏱️</span> Tiba: ~{{ $estimasiTiba }} Menit
+                                        </div>
                                     </div>
                                 @endif
-                            </div>
+                                </div>
 
                             <div class="mt-5 pt-4 border-t border-gray-100 flex gap-3">
-                                
                                 <a href="https://www.google.com/maps/dir/?api=1&destination={{ $workshop->latitude }},{{ $workshop->longitude }}" target="_blank" 
                                    class="flex-1 text-center bg-white border-2 border-[#C62828] hover:bg-red-50 text-[#C62828] text-xs sm:text-sm font-bold py-2.5 rounded-xl transition shadow-sm flex items-center justify-center gap-1.5">
                                     <span>🗺️</span> Rute
@@ -87,17 +97,14 @@
                                     if (str_starts_with($nomorWa, '0')) {
                                         $nomorWa = '62' . substr($nomorWa, 1);
                                     }
-                                    
-                                    // Buat Link Lokasi Customer berdasarkan URL saat ini
                                     $linkLokasiCustomer = "https://www.google.com/maps/search/?api=1&query=" . request('lat') . "," . request('lng');
-                                    $pesanWa = "Halo *" . $workshop->nama_bengkel . "*, saya butuh bantuan darurat. Bisakah Anda datang ke lokasi saya? Berikut adalah titik lokasi saya saat ini: " . $linkLokasiCustomer;
+                                    $pesanWa = "Halo *" . $workshop->nama_bengkel . "*, saya butuh bantuan darurat. Bisakah montir Anda datang ke lokasi saya? Berikut adalah titik lokasi saya saat ini: " . $linkLokasiCustomer;
                                 @endphp
                                 
                                 <a href="https://wa.me/{{ $nomorWa }}?text={{ urlencode($pesanWa) }}" target="_blank" 
                                    class="flex-1 text-center bg-green-500 hover:bg-green-600 text-white text-xs sm:text-sm font-bold py-2.5 rounded-xl transition shadow-sm flex items-center justify-center gap-1.5">
                                     <span>💬</span> Chat WA
                                 </a>
-
                             </div>
                         </div>
 
