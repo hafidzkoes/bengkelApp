@@ -21,6 +21,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role', // Tambahkan ini
+        'status_akun', // <--- TAMBAHKAN BARIS INI
         'phone', // Tambahkan ini
         'photo', // Tambahkan ini
     ];

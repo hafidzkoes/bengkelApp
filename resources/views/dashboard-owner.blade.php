@@ -1,113 +1,153 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard Pemilik Bengkel') }}
-        </h2>
-    </x-slot>
-
-    @php
-        date_default_timezone_set('Asia/Jakarta');
-        $waktuSekarang = date('H:i');
-        $buka = false;
-        
-        if ($workshop && $workshop->jam_buka && $workshop->jam_tutup) {
-            $jamBuka = date('H:i', strtotime($workshop->jam_buka));
-            $jamTutup = date('H:i', strtotime($workshop->jam_tutup));
+    <div class="bg-gray-50 min-h-screen text-gray-800 font-sans antialiased py-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             
-            if ($waktuSekarang >= $jamBuka && $waktuSekarang <= $jamTutup) {
-                $buka = true;
-            }
-        }
-    @endphp
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            
-            @if($workshop)
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border-l-4 {{ $buka ? 'border-green-500' : 'border-red-500' }}">
-                    <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
-                        <div>
-                            <h3 class="text-2xl font-bold text-gray-900">Selamat Datang, {{ $workshop->nama_bengkel }}!</h3>
-                            <p class="text-gray-500 mt-1">Pantau aktivitas dan status bengkel Anda hari ini.</p>
-                        </div>
-                        
-                        <div class="flex items-center gap-2 px-5 py-2.5 rounded-full font-bold {{ $buka ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-                            <span class="w-3 h-3 rounded-full {{ $buka ? 'bg-green-500 animate-pulse' : 'bg-red-500' }}"></span>
-                            {{ $buka ? 'BENGKEL BUKA' : 'BENGKEL TUTUP' }}
-                        </div>
-                    </div>
+            <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">
+                        Selamat Datang, {{ Auth::user()->name }}!
+                    </h1>
+                    <p class="text-xs sm:text-sm text-gray-500 mt-1">
+                        Pantau ringkasan data operasional dan pengaturan sistem LBS bengkel Anda di bawah ini.
+                    </p>
                 </div>
+                <span class="inline-flex self-start sm:self-center bg-red-50 text-red-600 text-[11px] px-3 py-1 rounded-full font-bold uppercase tracking-wider border border-red-100 shadow-sm">
+                    Akun Pemilik
+                </span>
+            </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white shadow-sm sm:rounded-lg p-6 border border-gray-100">
-                        <h4 class="font-bold text-gray-700 mb-4 border-b pb-2">Jam Operasional Anda</h4>
-                        @if($workshop->jam_buka && $workshop->jam_tutup)
-                            <div class="flex items-center gap-3 text-lg font-semibold text-gray-800">
-                                <span>🕒</span> 
-                                {{ date('H:i', strtotime($workshop->jam_buka)) }} WIB 
-                                <span class="text-gray-400">s/d</span> 
-                                {{ date('H:i', strtotime($workshop->jam_tutup)) }} WIB
-                            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                
+                <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Jam Operasional</p>
+                        @if(isset($workshop->jam_buka) && isset($workshop->jam_tutup))
+                            <h3 class="text-base font-bold text-gray-800 mt-2">
+                                {{ \Carbon\Carbon::parse($workshop->jam_buka)->format('H:i') }} - {{ \Carbon\Carbon::parse($workshop->jam_tutup)->format('H:i') }}
+                            </h3>
                         @else
-                            <p class="text-gray-500 italic text-sm">Belum diatur. Silakan atur di menu Layanan.</p>
+                            <h3 class="text-base font-bold text-gray-400 mt-2">Belum Ditentukan</h3>
                         @endif
                     </div>
-
-                    <div class="bg-white shadow-sm sm:rounded-lg p-6 border border-gray-100">
-                        <h4 class="font-bold text-gray-700 mb-4 border-b pb-2">Layanan Aktif</h4>
-                        <div class="flex flex-wrap gap-2">
-                            @if($workshop->bisa_tambal_ban)
-                                <span class="px-3 py-1 bg-indigo-50 text-indigo-700 font-semibold rounded-lg text-sm border border-indigo-100">⭕ Tambal Ban</span>
-                            @endif
-                            @if($workshop->bisa_perbaikan_mesin)
-                                <span class="px-3 py-1 bg-indigo-50 text-indigo-700 font-semibold rounded-lg text-sm border border-indigo-100">🏍️ Perbaikan Mesin</span>
-                            @endif
-                            
-                            @if(!$workshop->bisa_tambal_ban && !$workshop->bisa_perbaikan_mesin)
-                                <p class="text-gray-500 italic text-sm">Belum ada layanan yang dicentang.</p>
-                            @endif
-                        </div>
+                    <div class="mt-4 pt-2 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs text-gray-400">Status Saat Ini</span>
+                        @if(isset($workshop->jam_buka) && isset($workshop->jam_tutup))
+                            @php
+                                $sekarang = \Carbon\Carbon::now('Asia/Jakarta')->format('H:i');
+                                $jamBuka = \Carbon\Carbon::parse($workshop->jam_buka)->format('H:i');
+                                $jamTutup = \Carbon\Carbon::parse($workshop->jam_tutup)->format('H:i');
+                                $isBuka = ($sekarang >= $jamBuka && $sekarang <= $jamTutup);
+                            @endphp
+                            <span class="px-2 py-0.5 text-[10px] font-extrabold rounded-md {{ $isBuka ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-50 text-gray-600 border border-gray-200' }}">
+                                {{ $isBuka ? 'BUKA' : 'TUTUP' }}
+                            </span>
+                        @else
+                            <span class="text-[10px] text-gray-400 font-semibold">-</span>
+                        @endif
                     </div>
                 </div>
 
-                @if(($workshop->tampilkan_harga_ban ?? true) || ($workshop->tampilkan_harga_mesin ?? true))
-                    <div class="bg-white shadow-sm sm:rounded-lg p-6 border border-gray-100">
-                        <h4 class="font-bold text-gray-700 mb-4 border-b pb-2">Status Pembayaran & Estimasi Tarif</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Fitur Layanan Jasa</p>
+                        <div class="mt-2.5 space-y-1.5">
+                            @if(!empty($workshop->bisa_tambal_ban))
+                                <div class="flex items-center gap-2">
+                                    <span class="text-green-500 text-sm">✅</span>
+                                    <span class="text-sm font-bold text-gray-800">Tambal / Ganti Ban</span>
+                                </div>
+                            @endif
                             
-                            @if($workshop->tampilkan_harga_ban ?? true)
-                                <div class="p-4 bg-green-50/50 rounded-xl border border-green-100 flex justify-between items-center">
-                                    <div>
-                                        <span class="text-xs text-gray-500 font-bold uppercase">Estimasi Jasa Ban Bocor</span>
-                                        <p class="text-xl font-extrabold text-green-700 mt-1">Rp {{ number_format($workshop->harga_tambal_ban ?? 0, 0, ',', '.') }}</p>
-                                    </div>
-                                    <span class="text-2xl">💵</span>
+                            @if(!empty($workshop->bisa_perbaikan_mesin))
+                                <div class="flex items-center gap-2">
+                                    <span class="text-green-500 text-sm">✅</span>
+                                    <span class="text-sm font-bold text-gray-800">Perbaikan Motor Mogok</span>
                                 </div>
                             @endif
 
-                            @if($workshop->tampilkan_harga_mesin ?? true)
-                                <div class="p-4 bg-blue-50/50 rounded-xl border border-blue-100 flex justify-between items-center">
-                                    <div>
-                                        <span class="text-xs text-gray-500 font-bold uppercase">Estimasi Jasa Motor Mogok</span>
-                                        <p class="text-xl font-extrabold text-blue-700 mt-1">Rp {{ number_format($workshop->harga_perbaikan_mesin ?? 0, 0, ',', '.') }}</p>
-                                    </div>
-                                    <span class="text-2xl">💳</span>
-                                </div>
+                            @if(empty($workshop->bisa_tambal_ban) && empty($workshop->bisa_perbaikan_mesin))
+                                <span class="text-sm font-bold text-gray-400">Belum ada layanan aktif</span>
                             @endif
-
                         </div>
                     </div>
-                @endif
-                
-            @else
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border-l-4 border-red-500">
-                    <h3 class="text-xl font-bold text-red-600 mb-2">Profil Bengkel Belum Lengkap!</h3>
-                    <p class="mb-4">Silakan lengkapi data bengkel Anda terlebih dahulu agar pelanggan bisa menemukan Anda di peta.</p>
-                    <a href="{{ route('workshop.edit') }}" class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
-                        Lengkapi Profil Sekarang
-                    </a>
+                    <div class="mt-4 pt-2 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs text-gray-400">Filter Peta</span>
+                        @if(!empty($workshop->bisa_tambal_ban) || !empty($workshop->bisa_perbaikan_mesin))
+                            <span class="inline-flex items-center gap-1 text-[10px] text-blue-600 font-bold uppercase bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+                                MUNCUL
+                            </span>
+                        @else
+                            <span class="px-2 py-0.5 text-[10px] font-extrabold rounded-md bg-gray-50 text-gray-400 border border-gray-200">
+                                TERSEMBUNYI
+                            </span>
+                        @endif
+                    </div>
                 </div>
-            @endif
+
+                <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Tarif Jasa Darurat</p>
+                        <div class="mt-2.5 space-y-2">
+                            <div>
+                                <span class="block text-[11px] text-gray-400 font-medium">Jasa Ban Bocor:</span>
+                                <span class="text-sm font-extrabold text-gray-800">
+                                    @if($workshop->tampilkan_harga_ban ?? true)
+                                        Rp {{ number_format($workshop->harga_tambal_ban ?? 0, 0, ',', '.') }}
+                                    @else
+                                        <span class="text-xs text-gray-400 italic font-normal">Disembunyikan</span>
+                                    @endif
+                                </span>
+                            </div>
+                            <div>
+                                <span class="block text-[11px] text-gray-400 font-medium">Jasa Motor Mogok:</span>
+                                <span class="text-sm font-extrabold text-gray-800">
+                                    @if($workshop->tampilkan_harga_mesin ?? true)
+                                        Rp {{ number_format($workshop->harga_perbaikan_mesin ?? 0, 0, ',', '.') }}
+                                    @else
+                                        <span class="text-xs text-gray-400 italic font-normal">Disembunyikan</span>
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-2 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-xs text-gray-400">Status Info</span>
+                        @if(($workshop->tampilkan_harga_ban ?? true) || ($workshop->tampilkan_harga_mesin ?? true))
+                            <span class="inline-flex items-center gap-1 text-[10px] text-blue-600 font-bold uppercase bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+                                TERPAMPANG
+                            </span>
+                        @else
+                            <span class="px-2 py-0.5 text-[10px] font-extrabold rounded-md bg-gray-50 text-gray-400 border border-gray-200">
+                                TERSEMBUNYI
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Titik Koordinat</p>
+                        @if(isset($workshop->latitude) && isset($workshop->longitude))
+                            <h3 class="text-xs font-mono font-bold text-gray-700 mt-2.5 truncate">
+                                {{ Str::limit($workshop->latitude, 8, '') }},<br>{{ Str::limit($workshop->longitude, 8, '') }}
+                            </h3>
+                        @else
+                            <h3 class="text-sm font-bold text-amber-600 mt-2">Pin Belum<br>Dipasang</h3>
+                        @endif
+                    </div>
+                    <div class="text-xs mt-4 pt-2 border-t border-gray-100 flex items-center justify-between">
+                        <span class="text-gray-400">Sinyal Peta</span>
+                        @if(isset($workshop->latitude) && isset($workshop->longitude))
+                            <span class="inline-flex items-center gap-1 text-[10px] text-green-600 font-bold">
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Aktif
+                            </span>
+                        @else
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                        @endif
+                    </div>
+                </div>
+
+            </div>
 
         </div>
     </div>

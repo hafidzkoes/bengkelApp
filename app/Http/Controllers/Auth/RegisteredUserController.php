@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Workshop; // <-- Ini kunci utamanya agar tidak Class Not Found
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,19 +31,32 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // 1. Validasi Data
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:customer,owner'], // Tambahkan validasi ini
+            'role' => ['required', 'in:customer,owner'],
+            'nama_bengkel' => ['required_if:role,owner', 'nullable', 'string', 'max:255'],
+            'alamat_bengkel' => ['required_if:role,owner', 'nullable', 'string'],
         ]);
 
+        // 2. Simpan Data User (Pemilik / Customer)
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role, // Simpan role ke database
+            'role' => $request->role,
         ]);
+
+        // 3. Jika yang mendaftar adalah Owner, otomatis buatkan profil bengkelnya
+        if ($request->role === 'owner') {
+            Workshop::create([
+                'user_id' => $user->id,
+                'nama_bengkel' => $request->nama_bengkel,
+                'alamat_bengkel' => $request->alamat_bengkel,
+            ]);
+        }
 
         event(new Registered($user));
 

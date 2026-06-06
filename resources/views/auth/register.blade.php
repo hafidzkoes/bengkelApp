@@ -14,7 +14,7 @@
 </head>
 <body class="font-sans antialiased bg-gray-50 flex items-center justify-center min-h-screen p-4">
 
-    <div class="w-full max-w-md">
+    <div class="w-full max-w-md my-8">
         
         <div class="text-center mb-8">
             <a href="/" class="text-4xl font-extrabold tracking-tight text-gray-900 transition hover:opacity-80">
@@ -45,16 +45,40 @@
                     @enderror
                 </div>
 
+                <!-- Menangkap parameter URL: ?role=owner -->
+                @php
+                    $requestedRole = request('role', old('role', 'customer'));
+                @endphp
+
                 <div>
                     <label for="role" class="block font-semibold text-sm text-gray-700 mb-1">Daftar Sebagai</label>
                     <select id="role" name="role" required
                         class="block w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-lg shadow-sm sm:text-sm px-4 py-2.5 transition bg-white cursor-pointer">
-                        <option value="customer" {{ old('role') == 'customer' ? 'selected' : '' }}>Customer</option>
-                        <option value="owner" {{ old('role') == 'owner' ? 'selected' : '' }}>Pemilik Bengkel</option>
+                        <option value="customer" {{ $requestedRole == 'customer' ? 'selected' : '' }}>Customer</option>
+                        <option value="owner" {{ $requestedRole == 'owner' ? 'selected' : '' }}>Pemilik Bengkel</option>
                     </select>
                     @error('role')
                         <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                     @enderror
+                </div>
+
+                <!-- KOLOM EKSTRA KHUSUS OWNER (Hanya muncul jika dropdown memilih Pemilik Bengkel) -->
+                <div id="owner_fields" class="{{ $requestedRole == 'owner' ? 'block' : 'hidden' }} space-y-5 bg-red-50/50 p-4 rounded-xl border border-red-100">
+                    <p class="text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Informasi Bengkel</p>
+                    
+                    <div>
+                        <label for="nama_bengkel" class="block font-semibold text-sm text-gray-700 mb-1">Nama Bengkel <span class="text-red-500">*</span></label>
+                        <input id="nama_bengkel" type="text" name="nama_bengkel" value="{{ old('nama_bengkel') }}"
+                            class="block w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-lg shadow-sm sm:text-sm px-4 py-2.5 transition"
+                            placeholder="Contoh: Bengkel Maju Jaya">
+                    </div>
+                    
+                    <div>
+                        <label for="alamat_bengkel" class="block font-semibold text-sm text-gray-700 mb-1">Alamat Bengkel <span class="text-red-500">*</span></label>
+                        <textarea id="alamat_bengkel" name="alamat_bengkel" rows="2"
+                            class="block w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-lg shadow-sm sm:text-sm px-4 py-2.5 transition"
+                            placeholder="Masukkan alamat lengkap bengkel...">{{ old('alamat_bengkel') }}</textarea>
+                    </div>
                 </div>
 
                 <div>
@@ -111,6 +135,40 @@
     </div>
 
     <script>
+        // Logika untuk menampilkan/menyembunyikan form ekstra
+        document.getElementById('role').addEventListener('change', function() {
+            const ownerFields = document.getElementById('owner_fields');
+            const namaBengkelInput = document.getElementById('nama_bengkel');
+            const alamatBengkelInput = document.getElementById('alamat_bengkel');
+
+            if(this.value === 'owner') {
+                // Munculkan kolom ekstra
+                ownerFields.classList.remove('hidden');
+                ownerFields.classList.add('block');
+                // Jadikan wajib diisi
+                namaBengkelInput.setAttribute('required', 'required');
+                alamatBengkelInput.setAttribute('required', 'required');
+            } else {
+                // Sembunyikan kolom ekstra
+                ownerFields.classList.remove('block');
+                ownerFields.classList.add('hidden');
+                // Hapus wajib diisi agar form customer tetap bisa dikirim
+                namaBengkelInput.removeAttribute('required');
+                alamatBengkelInput.removeAttribute('required');
+                // Bersihkan isian
+                namaBengkelInput.value = '';
+                alamatBengkelInput.value = '';
+            }
+        });
+
+        // Setelan awal saat halaman pertama kali dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleSelect = document.getElementById('role');
+            // Memicu event 'change' secara manual agar logika wajib/tidak wajib di atas berjalan
+            roleSelect.dispatchEvent(new Event('change'));
+        });
+
+        // Logika hide/show password (asli dari Anda)
         function toggleVisibility(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);

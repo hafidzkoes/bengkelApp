@@ -2,152 +2,136 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard Pemilik Bengkel') }}
-        </h2>
-    </x-slot>
+    <div class="bg-white min-h-screen pt-6 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            @if(session('success'))
+                <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded-r-xl shadow-sm flex items-center gap-3">
+                    <span class="text-xl">✅</span>
+                    <span class="font-semibold">{{ session('success') }}</span>
+                </div>
+            @endif
 
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div class="mb-8 border-b border-gray-200 pb-5">
+                <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Edit Profil Bengkel</h2>
+                <p class="text-sm text-gray-500 mt-1">Silakan lengkapi data operasional bengkel Anda dan tentukan titik koordinat yang akurat.</p>
+            </div>
+
+            <form action="{{ route('workshop.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
                 
-                <h3 class="text-lg font-bold mb-4 text-gray-800">Lengkapi Profil Bengkel Anda</h3>
-
-                @if(session('success'))
-                    <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
-                <form action="{{ route('workshop.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
                     
-                    <div class="grid grid-cols-1 gap-6 mt-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Nama Bengkel *</label>
-                            <input type="text" name="nama_bengkel" 
-                                value="{{ old('nama_bengkel', $workshop->nama_bengkel ?? '') }}" 
-                                required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Alamat Lengkap *</label>
-                            <textarea name="alamat_bengkel" rows="3" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('alamat_bengkel', $workshop->alamat_bengkel ?? '') }}</textarea>
-                        </div>
-
-                        <div class="mt-2 p-4 border border-gray-200 rounded-xl bg-gray-50">
-                            <label class="block font-semibold text-sm text-gray-700 mb-2">
-                                📍 Titik Lokasi Peta (Klik pada peta untuk menancapkan pin)
+                    <div class="lg:col-span-5 space-y-8">
+                        
+                        <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200">
+                            <label class="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3">
+                                <span class="text-lg">📍</span> Titik Koordinat Bengkel
                             </label>
                             
-                            <div id="map" style="height: 350px; z-index: 1;" class="w-full rounded-lg shadow-inner border border-gray-300"></div>
+                            <div id="map" style="height: 300px; z-index: 1;" class="w-full rounded-xl shadow-inner border border-gray-300"></div>
                             
+                            <p class="text-xs text-gray-500 mt-3 font-medium leading-relaxed bg-white p-2.5 rounded-lg border border-gray-100">
+                                <span class="text-red-500 font-bold">*Wajib:</span> Geser dan klik pada peta untuk menancapkan pin lokasi tepat di atas bengkel Anda.
+                            </p>
+
                             <input type="hidden" name="latitude" id="latitude" value="{{ $workshop->latitude ?? '' }}">
                             <input type="hidden" name="longitude" id="longitude" value="{{ $workshop->longitude ?? '' }}">
-                            
-                            <p class="text-xs text-red-500 mt-2 font-medium">*Wajib: Geser dan klik peta untuk menentukan titik akurat bengkel Anda agar pelanggan bisa menemukan Anda.</p>
                         </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-800 mb-2">Upload Foto Bengkel</label>
+                            <div class="mt-1 flex justify-center px-6 pt-6 pb-8 border-2 border-gray-300 border-dashed rounded-2xl hover:border-red-400 hover:bg-red-50 transition-colors duration-300 bg-gray-50 group relative">
+                                <div class="space-y-2 text-center">
+                                    <span class="text-4xl text-gray-400 group-hover:text-red-400 transition-colors">📸</span>
+                                    <div class="flex text-sm text-gray-600 justify-center mt-2">
+                                        <label for="foto_bengkel" class="relative cursor-pointer bg-white px-3 py-1.5 rounded-lg border border-gray-200 font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 focus-within:outline-none focus-within:ring-2 focus-within:ring-red-500 shadow-sm transition">
+                                            <span>Pilih File Foto</span>
+                                            <input id="foto_bengkel" name="foto_bengkel" type="file" class="sr-only" accept="image/*">
+                                        </label>
+                                    </div>
+                                    <p class="text-xs text-gray-500 font-medium">PNG, JPG up to 2MB (Opsional)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="lg:col-span-7 space-y-6">
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Nomor WhatsApp Aktif * (Awali dengan 62...)</label>
-                            <input type="number" name="nomor_kontak" 
-                                value="{{ old('nomor_kontak', $workshop->nomor_kontak ?? '') }}" 
-                                required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Jam Buka (Opsional)</label>
-                                <input type="time" name="jam_buka" 
-                                    value="{{ old('jam_buka', isset($workshop->jam_buka) ? \Carbon\Carbon::parse($workshop->jam_buka)->format('H:i') : '') }}" 
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Jam Tutup (Opsional)</label>
-                                <input type="time" name="jam_tutup" 
-                                    value="{{ old('jam_tutup', isset($workshop->jam_tutup) ? \Carbon\Carbon::parse($workshop->jam_tutup)->format('H:i') : '') }}" 
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Nama Kepala Bengkel (Opsional)</label>
-                            <input type="text" name="nama_kepala_bengkel" 
-                                value="{{ old('nama_kepala_bengkel', $workshop->nama_kepala_bengkel ?? '') }}" 
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            <label class="block text-sm font-bold text-gray-700 mb-1.5">Nama Bengkel <span class="text-red-500">*</span></label>
+                            <input type="text" name="nama_bengkel" value="{{ old('nama_bengkel', $workshop->nama_bengkel ?? '') }}" required 
+                                class="block w-full rounded-xl border-gray-300 bg-gray-50 text-gray-900 focus:bg-white focus:border-red-500 focus:ring-red-500 sm:text-sm py-3 transition-colors shadow-sm"
+                                placeholder="Contoh: Bengkel Motor Jaya">
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Foto Bengkel (Opsional)</label>
-                            <input type="file" name="foto_bengkel" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            <label class="block text-sm font-bold text-gray-700 mb-1.5">Alamat Lengkap <span class="text-red-500">*</span></label>
+                            <textarea name="alamat_bengkel" rows="4" required 
+                                class="block w-full rounded-xl border-gray-300 bg-gray-50 text-gray-900 focus:bg-white focus:border-red-500 focus:ring-red-500 sm:text-sm py-3 transition-colors shadow-sm"
+                                placeholder="Masukkan nama jalan, RT/RW, kecamatan, dan patokan terdekat...">{{ old('alamat_bengkel', $workshop->alamat_bengkel ?? '') }}</textarea>
                         </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1.5">Nomor Telepon / WhatsApp <span class="text-red-500">*</span></label>
+                            <div class="relative rounded-xl shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm font-bold">+62</span>
+                                </div>
+                                <input type="number" name="nomor_kontak" value="{{ old('nomor_kontak', str_starts_with($workshop->nomor_kontak ?? '', '62') ? substr($workshop->nomor_kontak, 2) : ($workshop->nomor_kontak ?? '')) }}" required 
+                                    class="block w-full pl-12 rounded-xl border-gray-300 bg-gray-50 text-gray-900 focus:bg-white focus:border-red-500 focus:ring-red-500 sm:text-sm py-3 transition-colors"
+                                    placeholder="81234567890">
+                            </div>
+                            <p class="text-[11px] text-gray-500 mt-1.5">Gunakan nomor yang aktif dan terhubung dengan WhatsApp.</p>
+                        </div>
+
+                        <div class="pt-2">
+                            <label class="block text-sm font-bold text-gray-700 mb-1.5">Nama Kepala Bengkel (Opsional)</label>
+                            <input type="text" name="nama_kepala_bengkel" value="{{ old('nama_kepala_bengkel', $workshop->nama_kepala_bengkel ?? '') }}" 
+                                class="block w-full rounded-xl border-gray-300 bg-gray-50 text-gray-900 focus:bg-white focus:border-red-500 focus:ring-red-500 sm:text-sm py-3 transition-colors shadow-sm"
+                                placeholder="Nama penanggung jawab bengkel">
+                        </div>
+
                     </div>
-
-                    <div class="mt-8 flex justify-end">
-                        <button type="submit" class="bg-indigo-600 text-white px-6 py-2.5 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 font-semibold transition">
-                            Simpan Profil Bengkel
-                        </button>
-                    </div>
-                </form>
-            </div>
-            
-            <hr class="my-8 border-gray-300">
-            <h3 class="text-2xl font-bold mb-6 text-gray-800">Pengaturan Akun & Keamanan</h3>
-
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-6">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
                 </div>
-            </div>
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-6">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
+                <div class="mt-12 pt-6 border-t border-gray-200 flex justify-end">
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-8 py-3.5 rounded-xl shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 font-extrabold transition-all duration-300 transform hover:-translate-y-0.5">
+                        Simpan Perubahan
+                    </button>
                 </div>
-            </div>
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
-            </div>
-
+            </form>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Jika bengkel sudah punya titik, arahkan ke titik itu. Jika belum, arahkan ke tengah peta (default: Jakarta)
-            var startLat = {{ $workshop->latitude ?? '-6.200000' }};
-            var startLng = {{ $workshop->longitude ?? '106.816666' }};
+            var startLat = {{ $workshop->latitude ?? '-7.816700' }};
+            var startLng = {{ $workshop->longitude ?? '110.916700' }};
             var zoomLevel = {{ isset($workshop->latitude) ? '15' : '11' }};
 
-            // Membangun peta
             var map = L.map('map').setView([startLat, startLng], zoomLevel);
 
-            // Mengambil gambar peta dari OpenStreetMap
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 maxZoom: 19,
-                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EAP, and the GIS User Community'
+                attribution: 'Tiles &copy; Esri'
             }).addTo(map);
 
             var marker;
 
-            // Jika sebelumnya sudah pernah disave, munculkan pin-nya
             @if(isset($workshop->latitude) && isset($workshop->longitude))
                 marker = L.marker([startLat, startLng]).addTo(map);
             @endif
 
-            // Jika peta diklik, pindahkan/buat pin baru dan isi nilai ke laci tersembunyi
             map.on('click', function(e) {
                 var lat = e.latlng.lat;
                 var lng = e.latlng.lng;
 
-                // Memasukkan angka koordinat ke laci tersembunyi
                 document.getElementById('latitude').value = lat;
                 document.getElementById('longitude').value = lng;
 
-                // Menancapkan pin
                 if (marker) {
                     marker.setLatLng(e.latlng);
                 } else {

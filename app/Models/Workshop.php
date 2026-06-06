@@ -29,6 +29,7 @@ class Workshop extends Model
         'tampilkan_harga_mesin',  // <-- Tambahkan ini
         'latitude',   // <-- Tambahkan ini
         'longitude',  // <-- Tambahkan ini
+        'status', // <--- TAMBAHKAN BARIS INI
     ];
 
     // 2. Mendefinisikan relasi ke model User (Kebalikan)

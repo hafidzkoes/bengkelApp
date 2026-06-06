@@ -14,15 +14,11 @@
             </div>
 
             <div class="flex flex-col md:items-end w-full md:w-1/2 mt-8 md:mt-0">
-                <div class="text-left"> <h3 class="text-white font-semibold text-lg mb-4">Hubungi Kami</h3>
+                <div class="text-left"> 
+                    <h3 class="text-white font-semibold text-lg mb-4">Hubungi Kami</h3>
                     <ul class="space-y-3 text-sm text-gray-400">
-                        <li class="flex items-center gap-3">
-                            <span class="text-lg">📧</span> 
-                            <span>email@contoh.com</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <span class="text-lg">📞</span> 
-                            <span>6280000</span>
+                        <li>
+                            email@contoh.com
                         </li>
                     </ul>
                 </div>
