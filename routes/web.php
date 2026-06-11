@@ -59,15 +59,17 @@ Route::get('/dashboard', function () {
 
                 $a = sin($dLat/2) * sin($dLat/2) + cos($lat1) * cos($lat2) * sin($dLon/2) * sin($dLon/2);
                 $c = 2 * asin(sqrt($a));
-                $earthRadius = 6371; // Jari-jari bumi dalam Kilometer
-
-                $bengkel->jarak = $earthRadius * $c; 
+                $bengkel->jarak = 6371 * $c; 
                 return $bengkel;
             });
 
             // Urutkan bengkel dari nilai 'jarak' yang paling kecil (terdekat)
-            $workshops = $workshops->sortBy('jarak')->take(3);
+            $workshops = $workshops->sortBy('jarak');
         }
+
+        // ---> PINDAHKAN ->take(3) KE SINI <---
+        // Pastikan dipotong maksimal 3 bengkel, baik saat GPS nyala maupun mati
+        $workshops = $workshops->take(3);
 
         return view('dashboard-customer', compact('workshops'));
     }

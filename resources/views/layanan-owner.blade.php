@@ -4,7 +4,6 @@
             
             @if(session('success'))
                 <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded-r-xl shadow-sm flex items-center gap-3 transform transition-all duration-300 ease-out">
-                    <span class="text-xl">✅</span>
                     <span class="font-semibold">{{ session('success') }}</span>
                 </div>
             @endif

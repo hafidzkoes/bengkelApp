@@ -1,4 +1,19 @@
 <header class="bg-white border-b border-gray-200 shadow-sm z-50">
+    
+    @php
+        $namaTampil = 'Pengguna';
+        if(Auth::check()) {
+            $namaTampil = Auth::user()->name; // Setelan Awal: Nama Lengkap
+            
+            // Jika yang login adalah Owner, ganti dengan Nama Bengkel dari database
+            if(Auth::user()->role === 'owner') {
+                $bengkel = \App\Models\Workshop::where('user_id', Auth::id())->first();
+                if($bengkel && $bengkel->nama_bengkel) {
+                    $namaTampil = $bengkel->nama_bengkel;
+                }
+            }
+        }
+    @endphp
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div class="flex flex-col md:flex-row md:items-center md:justify-between py-4 md:h-20 gap-3 md:gap-0">
@@ -15,7 +30,7 @@
                                     <svg class="w-6 h-6 text-blue-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                                     </svg>
-                                    <span class="font-semibold max-w-[90px] truncate">{{ Auth::user()->name }}</span>
+                                    <span class="font-semibold max-w-[90px] truncate">{{ $namaTampil }}</span>
                                 </button>
                             </x-slot>
                             <x-slot name="content">
@@ -47,7 +62,7 @@
                         </x-dropdown>
                     @else
                         <a href="{{ route('register', ['role' => 'owner']) }}" class="text-red-600 hover:text-red-800 text-xs font-extrabold transition-colors">Daftar Mitra Bengkel</a>
-                        <a href="{{ route('login') }}" class="bg-[#0082D4] hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm">Masuk/Daftar</a>
+                        <a href="{{ route('login') }}" class="bg-[#C62828] hover:bg-red-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm">Masuk/Daftar</a>
                     @endauth
                 </div>
             </div>
@@ -80,7 +95,7 @@
                                 <svg class="w-7 h-7 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                                 </svg>
-                                <span class="font-semibold">{{ Auth::user()->name }}</span>
+                                <span class="font-semibold">{{ $namaTampil }}</span>
                                 <svg class="fill-current h-4 w-4 ml-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                 </svg>
@@ -115,7 +130,7 @@
                     </x-dropdown>
                 @else
                     <a href="{{ route('register', ['role' => 'owner']) }}" class="text-red-600 hover:text-red-800 text-sm font-extrabold transition-colors mr-2">Daftar Mitra Bengkel</a>
-                    <a href="{{ route('login') }}" class="bg-[#0082D4] hover:bg-blue-600 text-white px-6 py-2.5 rounded text-sm font-semibold transition-colors shadow-sm">Masuk/Daftar</a>
+                    <a href="{{ route('login') }}" class="bg-[#C62828] hover:bg-red-700 text-white px-6 py-2.5 rounded text-sm font-semibold transition-colors shadow-sm">Masuk/Daftar</a>
                 @endauth
             </div>
 

@@ -37,9 +37,16 @@
                     </div>
 
                     <div>
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Email Bengkel</h3>
+                        <p class="text-base font-semibold text-gray-900 mt-1">
+                            {{ $user->email }}
+                        </p>
+                    </div>
+
+                    <div>
                         <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Nomor WhatsApp</h3>
                         <p class="text-base font-semibold text-gray-900 mt-1">
-                            +{{ $workshop->nomor_kontak }}
+                            0{{ $workshop->nomor_kontak }}
                         </p>
                     </div>
 

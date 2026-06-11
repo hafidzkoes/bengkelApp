@@ -1,16 +1,16 @@
 <x-app-layout>
     <div class="flex flex-col bg-gray-50 min-h-screen">
         
-        <div class="relative bg-[#C62828] min-h-[200px] md:min-h-[280px] flex items-center overflow-hidden shadow-md pb-12 md:pb-16">
+        <div class="relative bg-[#292966] min-h-[200px] md:min-h-[280px] flex items-center overflow-hidden shadow-md pb-12 md:pb-16">
             
             <div class="container mx-auto px-4 md:px-12 flex flex-row items-center justify-between w-full relative z-10 pt-4">
                 
                 <div class="w-[60%] text-left py-6 pr-2 md:pr-4">
                     <h1 class="text-xl sm:text-3xl md:text-5xl font-extrabold text-white leading-tight tracking-tight">
-                        Nikmati hematnya <br class="hidden md:block"> servis kendaraan!
+                        Motor mogok di tengah jalan? 
                     </h1>
                     <p class="mt-2 md:mt-4 text-red-100 text-xs sm:text-base md:text-xl font-medium max-w-2xl leading-snug">
-                        Jelajahi promo dari bengkel terdekat dan booking sekarang!
+                        Jangan panik, teknisi kami yang datang!
                     </p>
                 </div>
 
@@ -236,11 +236,8 @@
             let lat = urlParams.get('lat') || localStorage.getItem('user_lat') || '';
             let lng = urlParams.get('lng') || localStorage.getItem('user_lng') || '';
 
-            if (lat && lng) {
-                window.location.href = "{{ route('cari.bengkel') }}?lat=" + lat + "&lng=" + lng + "&layanan=" + layanan;
-            } else {
-                modalLokasi.classList.remove('hidden'); // Munculkan pop-up kalau maksa klik tapi belum ada GPS
-            }
+            // Langsung arahkan ke halaman pencarian, tidak peduli GPS ada atau kosong
+            window.location.href = "{{ route('cari.bengkel') }}?lat=" + lat + "&lng=" + lng + "&layanan=" + layanan;
         }
 
         // FUNGSI SAAT TOMBOL LIHAT SEMUA DIKLIK
@@ -248,11 +245,8 @@
             let lat = urlParams.get('lat') || localStorage.getItem('user_lat') || '';
             let lng = urlParams.get('lng') || localStorage.getItem('user_lng') || '';
 
-            if (lat && lng) {
-                window.location.href = "{{ route('cari.bengkel') }}?lat=" + lat + "&lng=" + lng;
-            } else {
-                modalLokasi.classList.remove('hidden'); // Munculkan pop-up kalau maksa klik tapi belum ada GPS
-            }
+            // Langsung arahkan ke halaman pencarian, tidak peduli GPS ada atau kosong
+            window.location.href = "{{ route('cari.bengkel') }}?lat=" + lat + "&lng=" + lng;
         }
     </script>
 </x-app-layout>

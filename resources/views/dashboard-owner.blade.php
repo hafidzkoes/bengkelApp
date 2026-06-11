@@ -52,15 +52,13 @@
                         <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Fitur Layanan Jasa</p>
                         <div class="mt-2.5 space-y-1.5">
                             @if(!empty($workshop->bisa_tambal_ban))
-                                <div class="flex items-center gap-2">
-                                    <span class="text-green-500 text-sm">✅</span>
+                                <div class="flex items-center">
                                     <span class="text-sm font-bold text-gray-800">Tambal / Ganti Ban</span>
                                 </div>
                             @endif
                             
                             @if(!empty($workshop->bisa_perbaikan_mesin))
-                                <div class="flex items-center gap-2">
-                                    <span class="text-green-500 text-sm">✅</span>
+                                <div class="flex items-center">
                                     <span class="text-sm font-bold text-gray-800">Perbaikan Motor Mogok</span>
                                 </div>
                             @endif

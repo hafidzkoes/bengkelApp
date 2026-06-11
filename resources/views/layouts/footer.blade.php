@@ -1,4 +1,4 @@
-<footer class="bg-slate-900 pt-12 pb-6 mt-auto">
+<footer class="bg-[#292966] pt-12 pb-6 mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
         
         <div class="flex flex-col md:flex-row justify-between items-start gap-8">
@@ -9,7 +9,7 @@
                 </a>
                 
                 <p class="text-sm text-gray-400 max-w-sm leading-relaxed">
-                    Jl. Contoh Alamat Pembuat Web No. 123, Kelurahan, Kecamatan, Kota, Provinsi 12345
+                    Dukuh, Desa Jati, Kecamatan Jaten, Kabupaten Karanganyar
                 </p>
             </div>
 
@@ -18,7 +18,7 @@
                     <h3 class="text-white font-semibold text-lg mb-4">Hubungi Kami</h3>
                     <ul class="space-y-3 text-sm text-gray-400">
                         <li>
-                            email@contoh.com
+                            hkoesmedi@gmail.com
                         </li>
                     </ul>
                 </div>

@@ -34,11 +34,14 @@ class WorkshopController extends Controller
             'alamat_bengkel' => 'required|string',
             'nomor_kontak' => 'required|string|max:20',
             'nama_kepala_bengkel' => 'nullable|string|max:255',
-            'foto_bengkel' => 'nullable|image|max:2048', 
+            
+            // PERHATIKAN BARIS INI: max:20480 artinya batas maksimal 20 MB
+            'foto_bengkel' => 'nullable|image|max:20480', 
+            
             'latitude' => 'nullable|numeric',  
             'longitude' => 'nullable|numeric', 
-            'jam_buka' => 'nullable|date_format:H:i',  // <-- BARU
-            'jam_tutup' => 'nullable|date_format:H:i', // <-- BARU
+            'jam_buka' => 'nullable|date_format:H:i',  
+            'jam_tutup' => 'nullable|date_format:H:i', 
         ]);
 
         $user = auth()->user();
@@ -51,8 +54,8 @@ class WorkshopController extends Controller
             'nama_kepala_bengkel' => $request->nama_kepala_bengkel,
             'latitude' => $request->latitude,   
             'longitude' => $request->longitude, 
-            'jam_buka' => $request->jam_buka,   // <-- BARU
-            'jam_tutup' => $request->jam_tutup, // <-- BARU
+            'jam_buka' => $request->jam_buka,   
+            'jam_tutup' => $request->jam_tutup, 
         ];
 
         // 3. Logika untuk menyimpan file foto
@@ -114,6 +117,4 @@ class WorkshopController extends Controller
 
         return back()->with('error', 'Silakan isi profil bengkel terlebih dahulu!');
     }
-
-
 }

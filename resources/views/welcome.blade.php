@@ -1,16 +1,16 @@
 <x-app-layout>
     <div class="flex flex-col bg-gray-50 min-h-screen">
         
-        <div class="relative bg-[#C62828] min-h-[200px] md:min-h-[280px] flex items-center overflow-hidden shadow-md pb-12 md:pb-16">
+        <div class="relative bg-[#292966] min-h-[200px] md:min-h-[280px] flex items-center overflow-hidden shadow-md pb-12 md:pb-16">
             
             <div class="container mx-auto px-4 md:px-12 flex flex-row items-center justify-between w-full relative z-10 pt-4">
                 
                 <div class="w-[60%] text-left py-6 pr-2 md:pr-4">
                     <h1 class="text-xl sm:text-3xl md:text-5xl font-extrabold text-white leading-tight tracking-tight">
-                        Nikmati hematnya <br class="hidden md:block"> servis kendaraan!
+                        Motor mogok di tengah jalan?
                     </h1>
-                    <p class="mt-2 md:mt-4 text-red-100 text-xs sm:text-base md:text-xl font-medium max-w-2xl leading-snug">
-                        Solusi cepat saat darurat. Masuk atau Daftar sekarang untuk memanggil montir terdekat!
+                    <p class="mt-2 md:mt-4 text-blue-100 text-xs sm:text-base md:text-xl font-medium max-w-2xl leading-snug">
+                        Jangan panik, teknisi kami yang datang!
                     </p>
                 </div>
 
@@ -64,7 +64,7 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 
-                @forelse($workshops as $workshop)
+                @forelse($workshops->take(3) as $workshop)
                     <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
                         
                         <div class="h-44 w-full bg-gray-100 relative overflow-hidden flex-shrink-0">

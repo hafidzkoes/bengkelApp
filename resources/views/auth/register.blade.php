@@ -28,7 +28,7 @@
                 @csrf
 
                 <div>
-                    <label for="name" class="block font-semibold text-sm text-gray-700 mb-1">Nama Lengkap</label>
+                    <label id="label_name" for="name" class="block font-semibold text-sm text-gray-700 mb-1">Nama Lengkap</label>
                     <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus
                         class="block w-full border-gray-300 focus:border-red-500 focus:ring-red-500 rounded-lg shadow-sm sm:text-sm px-4 py-2.5 transition">
                     @error('name')
@@ -45,7 +45,6 @@
                     @enderror
                 </div>
 
-                <!-- Menangkap parameter URL: ?role=owner -->
                 @php
                     $requestedRole = request('role', old('role', 'customer'));
                 @endphp
@@ -62,7 +61,6 @@
                     @enderror
                 </div>
 
-                <!-- KOLOM EKSTRA KHUSUS OWNER (Hanya muncul jika dropdown memilih Pemilik Bengkel) -->
                 <div id="owner_fields" class="{{ $requestedRole == 'owner' ? 'block' : 'hidden' }} space-y-5 bg-red-50/50 p-4 rounded-xl border border-red-100">
                     <p class="text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Informasi Bengkel</p>
                     
@@ -135,11 +133,12 @@
     </div>
 
     <script>
-        // Logika untuk menampilkan/menyembunyikan form ekstra
+        // Logika untuk menampilkan/menyembunyikan form ekstra & ubah label
         document.getElementById('role').addEventListener('change', function() {
             const ownerFields = document.getElementById('owner_fields');
             const namaBengkelInput = document.getElementById('nama_bengkel');
             const alamatBengkelInput = document.getElementById('alamat_bengkel');
+            const labelName = document.getElementById('label_name'); // Tarik label nama
 
             if(this.value === 'owner') {
                 // Munculkan kolom ekstra
@@ -148,6 +147,8 @@
                 // Jadikan wajib diisi
                 namaBengkelInput.setAttribute('required', 'required');
                 alamatBengkelInput.setAttribute('required', 'required');
+                // Ubah teks label menjadi Nama Pemilik
+                labelName.innerText = 'Nama Pemilik Bengkel';
             } else {
                 // Sembunyikan kolom ekstra
                 ownerFields.classList.remove('block');
@@ -158,17 +159,19 @@
                 // Bersihkan isian
                 namaBengkelInput.value = '';
                 alamatBengkelInput.value = '';
+                // Kembalikan teks label menjadi Nama Lengkap
+                labelName.innerText = 'Nama Lengkap';
             }
         });
 
         // Setelan awal saat halaman pertama kali dimuat
         document.addEventListener('DOMContentLoaded', function() {
             const roleSelect = document.getElementById('role');
-            // Memicu event 'change' secara manual agar logika wajib/tidak wajib di atas berjalan
+            // Memicu event 'change' secara manual agar logika wajib/tidak wajib & ubah label di atas berjalan
             roleSelect.dispatchEvent(new Event('change'));
         });
 
-        // Logika hide/show password (asli dari Anda)
+        // Logika hide/show password
         function toggleVisibility(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
