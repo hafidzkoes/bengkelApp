@@ -91,10 +91,23 @@
                                 </a>
 
                                 @php
+                                    // 1. Ambil nomor dari database
                                     $nomorWa = $workshop->nomor_kontak;
+                                    
+                                    // 2. Bersihkan semua karakter selain angka (hilangkan spasi, tanda +, strip, dll)
+                                    $nomorWa = preg_replace('/[^0-9]/', '', $nomorWa);
+
+                                    // 3. Logika penyesuaian kode negara (Indonesia)
                                     if (str_starts_with($nomorWa, '0')) {
+                                        // Jika berawalan 0, ganti 0 dengan 62
                                         $nomorWa = '62' . substr($nomorWa, 1);
+                                    } elseif (str_starts_with($nomorWa, '8')) {
+                                        // Jika langsung berawalan 8 (seperti kasus error Anda), tambahkan 62 di depannya
+                                        $nomorWa = '62' . $nomorWa;
                                     }
+                                    // Jika sudah berawalan 62, maka akan dibiarkan saja
+
+                                    // 4. Siapkan link lokasi dan isi pesan
                                     $linkLokasiCustomer = "https://www.google.com/maps/search/?api=1&query=" . request('lat') . "," . request('lng');
                                     $pesanWa = "Halo *" . $workshop->nama_bengkel . "*, saya butuh bantuan darurat. Bisakah montir Anda datang ke lokasi saya? Berikut adalah titik lokasi saya saat ini: " . $linkLokasiCustomer;
                                 @endphp
