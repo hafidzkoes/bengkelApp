@@ -20,6 +20,13 @@
             
             <div class="flex justify-between items-center w-full md:w-auto flex-shrink-0">
                 
+                @if(auth()->check() && auth()->user()->role === 'owner')
+                    <button @click="sidebarOpen = true" class="p-2 text-gray-600 rounded-lg md:hidden hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                @endif
                 <div class="hidden md:block w-32"></div>
 
                 <div class="flex md:hidden items-center gap-3 ml-auto">

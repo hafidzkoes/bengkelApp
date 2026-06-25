@@ -18,11 +18,7 @@
         <div x-data="{ sidebarOpen: false }" class="flex h-screen bg-gray-50 overflow-hidden">
 
             @if(auth()->check() && auth()->user()->role === 'owner')
-                <div class="hidden md:flex md:flex-shrink-0 bg-slate-800">
-                    <div class="flex flex-col w-64 h-full border-r border-slate-700">
-                        @include('layouts.sidebar')
-                    </div>
-                </div>
+                @include('layouts.sidebar')
             @endif
 
             <div class="flex flex-col w-full flex-1 overflow-hidden">
