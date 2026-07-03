@@ -2,6 +2,30 @@
     <div class="bg-gray-50 min-h-screen text-gray-800 font-sans antialiased py-8">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             
+            <!-- BANNER PERINGATAN (Sudah Dikecilkan dan Lebih Proporsional) -->
+            @if(empty($workshop->nama_bengkel) || empty($workshop->latitude) || empty($workshop->longitude))
+                <div class="bg-red-50 border border-red-300 p-4 sm:px-6 sm:py-4 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-start sm:items-center">
+                        <div class="flex-shrink-0 mt-0.5 sm:mt-0">
+                            <svg class="h-8 w-8 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-base font-extrabold text-red-800 tracking-tight"><b class="uppercase">Peringatan</b></h3>
+                            <p class="text-sm text-red-700 mt-0.5 leading-snug">
+                                Bengkel Anda saat ini belum tampil di website BengkelApp, dikarenakan belum mengisi semua <b>Profil Bengkel</b> dan <b>Mengatur Titik Koordinat Bengkel</b> di <b class="uppercase">Edit Profil Bengkel</b>.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0 mt-3 sm:mt-0 sm:ml-4">
+                        <a href="{{ route('workshop.edit') }}" class="inline-flex items-center justify-center bg-red-600 text-white text-sm font-bold px-5 py-2 rounded-xl hover:bg-red-700 focus:ring-4 focus:ring-red-200 transition-all shadow-sm whitespace-nowrap">
+                            Lengkapi Sekarang
+                        </a>
+                    </div>
+                </div>
+            @endif
+
             <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 class="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">

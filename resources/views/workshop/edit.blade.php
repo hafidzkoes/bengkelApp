@@ -2,7 +2,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Menambahkan CSS untuk menghilangkan panah (spinner) pada input angka -->
     <style>
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
@@ -49,7 +48,6 @@
                                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                                         <span class="text-gray-500 sm:text-sm font-bold">+62</span>
                                     </div>
-                                    <!-- Menambahkan id="nomor_kontak" untuk ditangkap oleh Javascript -->
                                     <input type="number" id="nomor_kontak" name="nomor_kontak" value="{{ old('nomor_kontak', str_starts_with($workshop->nomor_kontak ?? '', '62') ? substr($workshop->nomor_kontak, 2) : ($workshop->nomor_kontak ?? '')) }}" required 
                                         class="block w-full pl-12 rounded-xl border-gray-300 bg-gray-50 text-gray-900 focus:bg-white focus:border-red-500 focus:ring-red-500 sm:text-sm py-3 transition-colors"
                                         placeholder="81234567890">
@@ -138,9 +136,16 @@
             }
             // ----------------------------------------
 
-            var startLat = {{ $workshop->latitude ?? '-7.816700' }};
-            var startLng = {{ $workshop->longitude ?? '110.916700' }};
-            var zoomLevel = {{ isset($workshop->latitude) ? '15' : '11' }};
+            // ---> BAGIAN YANG DIGANTI UNTUK SETTINGAN AWAL PETA <---
+            
+            // Jika lokasi kosong, arahkan ke Alun-Alun Karanganyar (-7.59466, 110.93993)
+            var startLat = {{ $workshop->latitude ?? '-7.59466' }};
+            var startLng = {{ $workshop->longitude ?? '110.93993' }};
+            
+            // Atur Zoom Peta ke 17 (Sangat dekat / maksimal)
+            var zoomLevel = {{ isset($workshop->latitude) ? '17' : '17' }};
+
+            // -------------------------------------------------------
 
             var map = L.map('map').setView([startLat, startLng], zoomLevel);
 
