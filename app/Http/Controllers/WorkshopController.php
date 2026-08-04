@@ -28,16 +28,12 @@ class WorkshopController extends Controller
     // Fungsi untuk menyimpan data edit profil (termasuk foto)
     public function store(Request $request)
     {
-        // 1. Validasi ditambah jam_buka & jam_tutup
         $request->validate([
             'nama_bengkel' => 'required|string|max:255',
             'alamat_bengkel' => 'required|string',
             'nomor_kontak' => 'required|string|max:20',
             'nama_kepala_bengkel' => 'nullable|string|max:255',
-            
-            // PERHATIKAN BARIS INI: max:20480 artinya batas maksimal 20 MB
             'foto_bengkel' => 'nullable|image|max:20480', 
-            
             'latitude' => 'nullable|numeric',  
             'longitude' => 'nullable|numeric', 
             'jam_buka' => 'nullable|date_format:H:i',  
@@ -46,7 +42,6 @@ class WorkshopController extends Controller
 
         $user = auth()->user();
         
-        // 2. Siapkan data dasar
         $data = [
             'nama_bengkel' => $request->nama_bengkel,
             'alamat_bengkel' => $request->alamat_bengkel,
@@ -58,13 +53,11 @@ class WorkshopController extends Controller
             'jam_tutup' => $request->jam_tutup, 
         ];
 
-        // 3. Logika untuk menyimpan file foto
         if ($request->hasFile('foto_bengkel')) {
             $path = $request->file('foto_bengkel')->store('foto_bengkel', 'public');
             $data['foto_bengkel'] = $path;
         }
 
-        // 4. Simpan ke database
         $user->workshop()->updateOrCreate(
             ['user_id' => $user->id],
             $data
@@ -78,7 +71,6 @@ class WorkshopController extends Controller
     {
         $user = auth()->user();
 
-        // Pastikan yang mengakses ini punya profil bengkel
         if ($user->workshop) {
             $user->workshop->update([
                 'jam_buka' => $request->jam_buka,
@@ -93,24 +85,53 @@ class WorkshopController extends Controller
         return back()->with('error', 'Silakan isi profil bengkel terlebih dahulu!');
     }
     
-
+    // FUNGSI INI DIUBAH: Menggunakan Validasi Kondisional (Pintar)
     public function updatePembayaran(Request $request)
     {
-        $request->validate([
-            'harga_tambal_ban' => 'required|numeric|min:0',
-            'harga_perbaikan_mesin' => 'required|numeric|min:0',
+        // 1. Buat wadah aturan validasi kosong
+        $rules = [];
+
+        // 2. HANYA periksa keamanan Nominal JIKA kotaknya DICENTANG
+        if ($request->has('tampilkan_harga_ban')) {
+            $rules['harga_tambal_ban'] = 'required|numeric|min:0|max:100000000';
+        }
+        
+        if ($request->has('tampilkan_harga_mesin')) {
+            $rules['harga_perbaikan_mesin'] = 'required|numeric|min:0|max:100000000';
+        }
+
+        // 3. Jalankan pengecekan keamanan
+        $request->validate($rules, [
+            'harga_tambal_ban.required' => 'Nominal tarif jasa ban bocor wajib diisi!',
+            'harga_perbaikan_mesin.required' => 'Nominal tarif jasa motor mogok wajib diisi!',
+            'harga_tambal_ban.max' => 'Nominal tersebut tidak logis untuk tarif jasa ban bocor!',
+            'harga_perbaikan_mesin.max' => 'Nominal tersebut tidak logis untuk tarif jasa motor mogok!',
+            'harga_tambal_ban.min' => 'Nominal tarif tidak boleh negatif!',
+            'harga_perbaikan_mesin.min' => 'Nominal tarif tidak boleh negatif!',
+            'harga_tambal_ban.numeric' => 'Tarif harus berupa angka!',
+            'harga_perbaikan_mesin.numeric' => 'Tarif harus berupa angka!',
         ]);
 
         $user = auth()->user();
 
         if ($user->workshop) {
-            $user->workshop->update([
-                'harga_tambal_ban' => $request->harga_tambal_ban,
-                'harga_perbaikan_mesin' => $request->harga_perbaikan_mesin,
-                // Menggunakan has() karena jika checkbox tidak dicentang, nilainya tidak ikut terkirim
+            // 4. Update status sakelarnya saja terlebih dahulu (Nyala/Mati)
+            $updateData = [
                 'tampilkan_harga_ban' => $request->has('tampilkan_harga_ban'),
                 'tampilkan_harga_mesin' => $request->has('tampilkan_harga_mesin'),
-            ]);
+            ];
+
+            // 5. HANYA simpan nominal harga baru JIKA kotaknya dicentang.
+            // (Jika centang dilepas, sistem membiarkan harga lama tetap aman di Database)
+            if ($request->has('tampilkan_harga_ban')) {
+                $updateData['harga_tambal_ban'] = $request->harga_tambal_ban;
+            }
+            if ($request->has('tampilkan_harga_mesin')) {
+                $updateData['harga_perbaikan_mesin'] = $request->harga_perbaikan_mesin;
+            }
+
+            // 6. Eksekusi penyimpanan ke Database
+            $user->workshop->update($updateData);
 
             return back()->with('success', 'Tarif dan Status Pembayaran berhasil diperbarui!');
         }
