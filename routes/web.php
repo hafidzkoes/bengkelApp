@@ -284,15 +284,31 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
 
     // Rute untuk MENYIMPAN HASIL EDIT OWNER BENGKEL
     Route::post('/admin/pengguna/owner/{id}/update', function (Illuminate\Http\Request $request, $id) {
+        
+        // ---> 1. KODE VALIDASI DITAMBAHKAN DI SINI (Penahan Crash) <---
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'nama_bengkel' => 'required|string|max:255',
+            'nomor_kontak' => 'required|string|max:20',
+            'alamat_bengkel' => 'required|string',
+        ], [
+            'name.required' => 'Nama Pemilik tidak boleh dikosongkan!',
+            'email.required' => 'Email tidak boleh dikosongkan!',
+            'nama_bengkel.required' => 'Nama Bengkel tidak boleh dikosongkan!',
+            'nomor_kontak.required' => 'Nomor WhatsApp tidak boleh dikosongkan!',
+            'alamat_bengkel.required' => 'Alamat Lengkap tidak boleh dikosongkan!',
+        ]);
+
         $user = App\Models\User::findOrFail($id);
         
-        // 1. Update data pribadi Owner (Tanpa Foto)
+        // 2. Update data pribadi Owner (Tanpa Foto)
         $user->name = $request->name;
         $user->email = $request->email;
         // Kita menghapus $user->phone di sini karena disimpannya di tabel workshop
         $user->save();
 
-        // 2. Update data Bengkelnya
+        // 3. Update data Bengkelnya
         if ($user->workshop) {
             
             // ---> INI BARIS BARU YANG DITAMBAHKAN AGAR NAMA SINKRON <---

@@ -165,10 +165,12 @@
                                     <td class="px-6 py-4">
                                         <div class="flex items-center justify-center gap-2">
                                             
+                                            <!-- Tombol pemicu Modal -->
                                             <button type="button" onclick="document.getElementById('modal-edit-owner-{{ $owner->id }}').classList.remove('hidden')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm font-semibold text-xs transition">
                                                 Detail / Edit
                                             </button>
 
+                                            <!-- Form untuk tombol Blokir -->
                                             <form action="{{ route('admin.pengguna.toggle', $owner->id) }}" method="POST">
                                                 @csrf
                                                 @if($owner->status_akun === 'aktif')
@@ -179,27 +181,34 @@
                                             </form>
                                         </div>
 
-                                        <div id="modal-edit-owner-{{ $owner->id }}" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity text-left">
+                                        <!-- >>> KODE MODAL YANG BARU DIPERBARUI (PENAHAN HIDDEN & PESAN MERAH) <<< -->
+                                        <div id="modal-edit-owner-{{ $owner->id }}" class="{{ old('owner_id') == $owner->id ? '' : 'hidden' }} fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity text-left">
                                             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-200">
                                                 
                                                 <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center sticky top-0 z-10">
                                                     <h3 class="font-bold text-gray-800 text-lg">Detail & Edit Data Bengkel</h3>
-                                                    <button type="button" onclick="document.getElementById('modal-edit-owner-{{ $owner->id }}').classList.add('hidden')" class="text-gray-400 hover:text-gray-700 font-bold text-xl transition">&times;</button>
+                                                    <!-- Tombol Close Modal (Hapus error jika ditutup manual) -->
+                                                    <a href="{{ route('admin.pengguna.owner') }}" class="text-gray-400 hover:text-gray-700 font-bold text-xl transition">&times;</a>
                                                 </div>
 
                                                 <form action="{{ route('admin.pengguna.owner.update', $owner->id) }}" method="POST" enctype="multipart/form-data" class="p-6 text-left">
                                                     @csrf
+                                                    
+                                                    <!-- INPUT TERSEMBUNYI SEBAGAI PENANDA ERROR MILIK SIAPA -->
+                                                    <input type="hidden" name="owner_id" value="{{ $owner->id }}">
                                                     
                                                     <div class="bg-gray-50 border border-gray-200 rounded-xl p-5 mb-6">
                                                         <h4 class="font-semibold text-gray-800 mb-4">Informasi Pribadi Pemilik</h4>
                                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                             <div>
                                                                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Nama Pemilik Bengkel</label>
-                                                                <input type="text" name="name" value="{{ optional($owner->workshop)->nama_kepala_bengkel ?? $owner->name }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                                <input type="text" name="name" value="{{ old('name', optional($owner->workshop)->nama_kepala_bengkel ?? $owner->name) }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                                @error('name') <p class="text-red-500 text-xs font-semibold mt-1">{{ $message }}</p> @enderror
                                                             </div>
                                                             <div>
                                                                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Alamat Email</label>
-                                                                <input type="email" name="email" value="{{ $owner->email }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                                <input type="email" name="email" value="{{ old('email', $owner->email) }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                                @error('email') <p class="text-red-500 text-xs font-semibold mt-1">{{ $message }}</p> @enderror
                                                             </div>
                                                         </div>
                                                     </div>
@@ -234,34 +243,39 @@
                                                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                                 <div>
                                                                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Nama Bengkel</label>
-                                                                    <input type="text" name="nama_bengkel" value="{{ optional($owner->workshop)->nama_bengkel }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                                    <input type="text" name="nama_bengkel" value="{{ old('nama_bengkel', optional($owner->workshop)->nama_bengkel) }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                                    @error('nama_bengkel') <p class="text-red-500 text-xs font-semibold mt-1">{{ $message }}</p> @enderror
                                                                 </div>
                                                                 <div>
                                                                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Nomor WhatsApp</label>
-                                                                    <input type="text" name="nomor_kontak" value="{{ $owner->workshop->nomor_kontak ?? '' }}" placeholder="Contoh: 08123456789" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                                    <input type="text" name="nomor_kontak" value="{{ old('nomor_kontak', optional($owner->workshop)->nomor_kontak) }}" placeholder="Contoh: 08123456789" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                                    @error('nomor_kontak') <p class="text-red-500 text-xs font-semibold mt-1">{{ $message }}</p> @enderror
                                                                 </div>
                                                             </div>
                                                             
                                                             <div>
                                                                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Alamat Lengkap</label>
-                                                                <textarea name="alamat_bengkel" rows="2" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">{{ optional($owner->workshop)->alamat_bengkel }}</textarea>
+                                                                <textarea name="alamat_bengkel" rows="2" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">{{ old('alamat_bengkel', optional($owner->workshop)->alamat_bengkel) }}</textarea>
+                                                                @error('alamat_bengkel') <p class="text-red-500 text-xs font-semibold mt-1">{{ $message }}</p> @enderror
                                                             </div>
 
                                                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                                 <div>
                                                                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Garis Lintang (Latitude)</label>
-                                                                    <input type="text" name="latitude" value="{{ optional($owner->workshop)->latitude }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                                    <!-- old() agar tidak hilang jika ada error -->
+                                                                    <input type="text" name="latitude" value="{{ old('latitude', optional($owner->workshop)->latitude) }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
                                                                 </div>
                                                                 <div>
                                                                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Garis Bujur (Longitude)</label>
-                                                                    <input type="text" name="longitude" value="{{ optional($owner->workshop)->longitude }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                                    <!-- old() agar tidak hilang jika ada error -->
+                                                                    <input type="text" name="longitude" value="{{ old('longitude', optional($owner->workshop)->longitude) }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                     <div class="mt-6 flex justify-end gap-3 sticky bottom-0 bg-white pt-4 border-t border-gray-100">
-                                                        <button type="button" onclick="document.getElementById('modal-edit-owner-{{ $owner->id }}').classList.add('hidden')" class="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold text-xs rounded-lg uppercase tracking-wider transition">Batal</button>
+                                                        <a href="{{ route('admin.pengguna.owner') }}" class="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold text-xs rounded-lg uppercase tracking-wider transition">Batal</a>
                                                         <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg uppercase tracking-wider shadow-sm transition">Simpan Perubahan</button>
                                                     </div>
                                                 </form>
