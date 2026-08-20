@@ -166,16 +166,21 @@
                                             
                                         </div>
 
-                                        <div id="modal-edit-{{ $customer->id }}" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity">
+                                        <!-- >>> KODE MODAL YANG BARU DIPERBARUI (PENAHAN HIDDEN & PESAN MERAH) <<< -->
+                                        <div id="modal-edit-{{ $customer->id }}" class="{{ old('customer_id') == $customer->id ? '' : 'hidden' }} fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity">
                                             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-gray-200">
                                                 
                                                 <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center text-left">
                                                     <h3 class="font-extrabold text-gray-800 text-lg">Detail & Edit Customer</h3>
-                                                    <button type="button" onclick="document.getElementById('modal-edit-{{ $customer->id }}').classList.add('hidden')" class="text-gray-400 hover:text-gray-700 font-bold text-xl transition">&times;</button>
+                                                    <!-- Tombol Batal/Close Modal (Hapus error jika ditutup manual) -->
+                                                    <a href="{{ route('admin.pengguna.customer') }}" class="text-gray-400 hover:text-gray-700 font-bold text-xl transition">&times;</a>
                                                 </div>
 
                                                 <form action="{{ route('admin.pengguna.customer.update', $customer->id) }}" method="POST" enctype="multipart/form-data" class="p-6 text-left">
                                                     @csrf
+                                                    
+                                                    <!-- INPUT TERSEMBUNYI SEBAGAI PENANDA ERROR MILIK SIAPA -->
+                                                    <input type="hidden" name="customer_id" value="{{ $customer->id }}">
                                                     
                                                     <div class="space-y-4">
                                                         <div class="flex items-center gap-4 mb-4">
@@ -203,22 +208,28 @@
 
                                                         <div>
                                                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Nama Lengkap</label>
-                                                            <input type="text" name="name" value="{{ $customer->name }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                            <!-- old() agar ketikan tidak hilang jika ada error -->
+                                                            <input type="text" name="name" value="{{ old('name', $customer->name) }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                            @error('name') <p class="text-red-500 text-xs font-semibold mt-1">{{ $message }}</p> @enderror
                                                         </div>
                                                         
                                                         <div>
                                                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Alamat Email</label>
-                                                            <input type="email" name="email" value="{{ $customer->email }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                            <!-- old() agar ketikan tidak hilang jika ada error -->
+                                                            <input type="email" name="email" value="{{ old('email', $customer->email) }}" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                            @error('email') <p class="text-red-500 text-xs font-semibold mt-1">{{ $message }}</p> @enderror
                                                         </div>
 
                                                         <div>
                                                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Nomor WhatsApp</label>
-                                                            <input type="text" name="phone" value="{{ $customer->phone ?? '' }}" placeholder="Contoh: 08123456789" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                            <!-- old() agar ketikan tidak hilang jika ada error -->
+                                                            <input type="text" name="phone" value="{{ old('phone', $customer->phone ?? '') }}" placeholder="Contoh: 08123456789" class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-sm font-medium">
+                                                            @error('phone') <p class="text-red-500 text-xs font-semibold mt-1">{{ $message }}</p> @enderror
                                                         </div>
                                                     </div>
 
                                                     <div class="mt-8 flex justify-end gap-3 border-t border-gray-100 pt-5">
-                                                        <button type="button" onclick="document.getElementById('modal-edit-{{ $customer->id }}').classList.add('hidden')" class="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold text-xs rounded-lg uppercase tracking-wider transition">Batal</button>
+                                                        <a href="{{ route('admin.pengguna.customer') }}" class="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold text-xs rounded-lg uppercase tracking-wider transition">Batal</a>
                                                         <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg uppercase tracking-wider shadow-sm transition">Simpan Perubahan</button>
                                                     </div>
                                                 </form>

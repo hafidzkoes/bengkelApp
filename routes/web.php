@@ -364,6 +364,18 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
 
     // Rute untuk MENYIMPAN HASIL EDIT CUSTOMER
     Route::post('/admin/pengguna/customer/{id}/update', function (Illuminate\Http\Request $request, $id) {
+        
+        // ---> 1. KODE VALIDASI DITAMBAHKAN DI SINI UNTUK CUSTOMER <---
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+        ], [
+            'name.required' => 'Nama Lengkap tidak boleh dikosongkan!',
+            'email.required' => 'Email tidak boleh dikosongkan!',
+            'phone.required' => 'Nomor WhatsApp tidak boleh dikosongkan!',
+        ]);
+
         $user = App\Models\User::findOrFail($id);
         
         // Update data teks
