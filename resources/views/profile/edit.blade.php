@@ -50,29 +50,37 @@
                             <div>
                                 <label for="email" class="block text-sm font-bold text-gray-700 mb-2">Email Login <span class="text-red-500">*</span></label>
                                 <input id="email" name="email" type="email" class="block w-full border-gray-200 focus:border-red-500 focus:ring-red-500 rounded-xl shadow-sm px-4 py-3 transition text-gray-800" value="{{ old('email', $user->email) }}" required>
+                                <!-- Penangkap Error Lapis 2 -->
+                                @error('email') <p class="text-red-500 text-xs font-semibold mt-1">{{ $message }}</p> @enderror
                             </div>
 
                         @else
                             <div>
                                 <label for="name" class="block text-sm font-bold text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
                                 <input id="name" name="name" type="text" class="block w-full border-gray-200 focus:border-red-500 focus:ring-red-500 rounded-xl shadow-sm px-4 py-3 transition text-gray-800" value="{{ old('name', $user->name) }}" required autofocus>
+                                <!-- Penangkap Error Lapis 2 -->
+                                @error('name') <p class="text-red-500 text-xs font-semibold mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div>
                                 <label for="email" class="block text-sm font-bold text-gray-700 mb-2">Email <span class="text-red-500">*</span></label>
                                 <input id="email" name="email" type="email" class="block w-full border-gray-200 focus:border-red-500 focus:ring-red-500 rounded-xl shadow-sm px-4 py-3 transition text-gray-800" value="{{ old('email', $user->email) }}" required>
+                                <!-- Penangkap Error Lapis 2 -->
+                                @error('email') <p class="text-red-500 text-xs font-semibold mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div>
-                                <label for="phone" class="block text-sm font-bold text-gray-700 mb-2">Nomor WhatsApp / HP</label>
+                                <label for="phone" class="block text-sm font-bold text-gray-700 mb-2">Nomor WhatsApp / HP <span class="text-red-500">*</span></label>
                                 <div class="relative rounded-xl shadow-sm">
                                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                                         <span class="text-gray-500 sm:text-sm font-bold">+62</span>
                                     </div>
                                     <input id="phone" name="phone" type="number" placeholder="81234567890" 
                                         class="block w-full pl-12 border-gray-200 focus:border-red-500 focus:ring-red-500 rounded-xl shadow-sm py-3 transition text-gray-800" 
-                                        value="{{ old('phone', str_starts_with($user->phone ?? '', '62') ? substr($user->phone, 2) : ($user->phone ?? '')) }}">
+                                        value="{{ old('phone', str_starts_with($user->phone ?? '', '62') ? substr($user->phone, 2) : ($user->phone ?? '')) }}" required>
                                 </div>
+                                <!-- Penangkap Error Lapis 2 -->
+                                @error('phone') <p class="text-red-500 text-xs font-semibold mt-1">{{ $message }}</p> @enderror
                                 <p class="mt-1.5 text-xs text-gray-400 font-medium">Gunakan nomor yang aktif dan terhubung dengan WhatsApp.</p>
                             </div>
 
@@ -81,6 +89,8 @@
                                 <div class="mt-1">
                                     <input id="photo" name="photo" type="file" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-red-50 file:text-red-600 hover:file:bg-red-100 transition shadow-sm border border-gray-100 rounded-xl bg-white cursor-pointer">
                                 </div>
+                                <!-- Penangkap Error Lapis 2 -->
+                                @error('photo') <p class="text-red-500 text-xs font-semibold mt-1">{{ $message }}</p> @enderror
                             </div>
                         @endif
 
