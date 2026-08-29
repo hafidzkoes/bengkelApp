@@ -13,7 +13,10 @@ Route::get('/', function () {
     $workshops = App\Models\Workshop::whereNotNull('nama_bengkel')
                             ->whereNotNull('latitude')
                             ->whereNotNull('longitude')
-                            ->where('status', 'disetujui') // <--- TAMBAHKAN BARIS INI
+                            ->where('status', 'disetujui')
+                            ->whereHas('user', function($q) {
+                                $q->where('status_akun', 'aktif'); // <-- Filter baru: pastikan akun owner aktif
+                            })
                             ->get();
 
     return view('welcome', compact('workshops'));
@@ -43,7 +46,10 @@ Route::get('/dashboard', function () {
         $workshops = Workshop::whereNotNull('nama_bengkel')
                             ->whereNotNull('latitude')
                             ->whereNotNull('longitude')
-                            ->where('status', 'disetujui') // <--- TAMBAHKAN BARIS INI
+                            ->where('status', 'disetujui')
+                            ->whereHas('user', function($q) {
+                                $q->where('status_akun', 'aktif'); // <-- Filter baru: pastikan akun owner aktif
+                            })
                             ->get(); 
 
         // Hitung Jarak & Urutkan (Terdekat)
@@ -67,7 +73,6 @@ Route::get('/dashboard', function () {
             $workshops = $workshops->sortBy('jarak');
         }
 
-        // ---> PINDAHKAN ->take(3) KE SINI <---
         // Pastikan dipotong maksimal 3 bengkel, baik saat GPS nyala maupun mati
         $workshops = $workshops->take(3);
 
@@ -90,7 +95,10 @@ Route::get('/cari-bengkel', function () {
         $query = Workshop::whereNotNull('nama_bengkel')
                             ->whereNotNull('latitude')
                             ->whereNotNull('longitude')
-                            ->where('status', 'disetujui'); // <--- TAMBAHKAN BARIS INI (Jangan lupa titik koma);
+                            ->where('status', 'disetujui')
+                            ->whereHas('user', function($q) {
+                                $q->where('status_akun', 'aktif'); // <-- Filter baru: pastikan akun owner aktif
+                            });
 
         // Tentukan judul halaman dan saring data sesuai pilihan tombol atau ketikan pencarian
         if ($layanan == 'ban_bocor') {
@@ -211,7 +219,7 @@ Route::middleware(['auth', IsAdmin::class])->group(function () {
                                 
         // 2. Hitung statistik untuk kartu-kartu di atas tabel
         $total_customer = App\Models\User::where('role', 'customer')->count();
-        $bengkel_aktif = App\Models\Workshop::where('status', 'disetujui')->count(); // Nanti kita buat status 'disetujui'
+        $bengkel_aktif = App\Models\Workshop::where('status', 'disetujui')->count();
         $total_pending = $bengkel_pending->count();
 
         // 3. Kirim datanya ke halaman HTML (View)
