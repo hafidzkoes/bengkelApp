@@ -57,7 +57,8 @@
 
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-1.5">Nama Kepala Bengkel (Opsional)</label>
-                                <input type="text" name="nama_kepala_bengkel" value="{{ old('nama_kepala_bengkel', $workshop->nama_kepala_bengkel ?? Auth::user()->name) }}" 
+                                <!-- BAGIAN YANG DIPERBAIKI: Hapus Auth::user()->name -->
+                                <input type="text" name="nama_kepala_bengkel" value="{{ old('nama_kepala_bengkel', $workshop->nama_kepala_bengkel ?? '') }}" 
                                     class="block w-full rounded-xl border-gray-300 bg-gray-50 text-gray-900 focus:bg-white focus:border-red-500 focus:ring-red-500 sm:text-sm py-3 transition-colors shadow-sm"
                                     placeholder="Nama penanggung jawab bengkel">
                             </div>
